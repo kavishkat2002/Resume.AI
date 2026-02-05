@@ -1,0 +1,22 @@
+project_id = "tstdbyqpuzaaowwiedzv"
+
+[functions.analyze-job]
+verify_jwt = false
+
+[functions.analyze-github]
+verify_jwt = false
+
+[functions.analyze-linkedin]
+verify_jwt = false
+
+[functions.match-skills]
+verify_jwt = false
+
+[functions.generate-resume]
+verify_jwt = false
+
+[functions.calculate-ats-score]
+verify_jwt = false
+
+[functions.suggest-learning]
+verify_jwt = false
