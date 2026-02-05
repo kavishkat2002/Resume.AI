@@ -55,7 +55,7 @@ const ResumeBuilder = () => {
   const templateRef = useRef<HTMLDivElement>(null);
   const [resumeHistory, setResumeHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [currentResumeId, setCurrentResumeId] = useState<string | null>(() => localStorage.getItem("resume_currentResumeId"));
+  const [currentResumeId, setCurrentResumeId] = useState<string | null>(() => localStorage.getItem("resume_history_current_id"));
   const [isAddingToTracker, setIsAddingToTracker] = useState(false);
   const [activeTab, setActiveTab] = useState("resume");
   const [clCompanyName, setClCompanyName] = useState(() => localStorage.getItem("cl_companyName") || "");
@@ -85,9 +85,9 @@ const ResumeBuilder = () => {
     localStorage.setItem("cl_requirements", clRequirements);
     localStorage.setItem("cl_resumeContext", clResumeContext);
     if (currentResumeId) {
-      localStorage.setItem("resume_currentResumeId", currentResumeId);
+      localStorage.setItem("resume_history_current_id", currentResumeId);
     } else {
-      localStorage.removeItem("resume_currentResumeId");
+      localStorage.removeItem("resume_history_current_id");
     }
   }, [fullName, email, phone, github, linkedin, portfolio, location, jobTitle, companyName, jobKeywords, skills, projects, experience, education, resume, coverLetter, jobDescription, currentResumeId]);
 
@@ -305,7 +305,7 @@ const ResumeBuilder = () => {
       // Refresh history after saving
       await fetchResumeHistory();
       setCurrentResumeId(data.id);
-      localStorage.setItem("resume_currentResumeId", data.id);
+      localStorage.setItem("resume_history_current_id", data.id);
       toast.success("Resume saved to history!");
       return data.id;
     } catch (error) {
@@ -334,7 +334,7 @@ const ResumeBuilder = () => {
         .from("jobs")
         .insert({
           user_id: user.id,
-          job_title: jobTitle,
+          job_title: jobTitle || "Untitled Position",
           company_name: "TBD", // User might not have entered it yet
           job_description: jobDescription || "Generated from Resume Builder",
           required_skills: parseCommaSeparated(jobKeywords),
@@ -352,16 +352,20 @@ const ResumeBuilder = () => {
           user_id: user.id,
           job_id: jobData.id,
           resume_history_id: currentResumeId, // Linked to the newly created resume history record
-          status: "applied",
+          status: "saved", // Default to saved instead of applied
           applied_date: new Date().toISOString().split("T")[0]
         });
 
       if (appError) throw appError;
 
       toast.success("Added to Application Tracker!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to add to tracker:", error);
-      toast.error("Failed to add to tracker");
+      if (error.code === '23503') { // Foreign key violation
+        toast.error("Resume ID mismatch. Please click 'Generate ATS Resume' again to create a trackable record.");
+      } else {
+        toast.error(`Failed to add to tracker: ${error.message || "Unknown error"}`);
+      }
     } finally {
       setIsAddingToTracker(false);
     }
@@ -1567,7 +1571,7 @@ const ResumeBuilder = () => {
       "resume_linkedin", "resume_portfolio", "resume_location", "resume_jobTitle",
       "resume_companyName", "resume_jobKeywords", "resume_skills", "resume_projects",
       "resume_experience", "resume_education", "resume_resumeText", "resume_coverLetter",
-      "resume_jobDescription", "resume_currentResumeId"
+      "resume_jobDescription", "resume_history_current_id"
     ];
     keys.forEach(k => localStorage.removeItem(k));
 
