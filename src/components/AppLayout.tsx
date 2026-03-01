@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { ResumeAIBot } from "./ResumeAIBot";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -59,6 +60,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             {children}
           </div>
         </main>
+        <ResumeAIBot />
       </div>
     </SidebarProvider>
   );

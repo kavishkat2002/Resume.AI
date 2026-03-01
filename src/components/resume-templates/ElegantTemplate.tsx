@@ -1,32 +1,6 @@
 import React from 'react';
 
-interface ResumeData {
-    fullName: string;
-    email: string;
-    phone: string;
-    location: string;
-    github?: string;
-    linkedin?: string;
-    portfolio?: string;
-    summary?: string;
-    skills: string[];
-    experience: Array<{
-        title: string;
-        company: string;
-        duration: string;
-        bullets: string[];
-    }>;
-    projects: Array<{
-        name: string;
-        description: string;
-        tech: string;
-    }>;
-    education: Array<{
-        degree: string;
-        institution: string;
-        year: string;
-    }>;
-}
+import { ResumeData } from './index';
 
 interface ElegantTemplateProps {
     data: ResumeData;
@@ -47,7 +21,7 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
         }}>
             {/* Header */}
             <header style={{
-                textAlign: 'center',
+                textAlign: 'left',
                 marginBottom: '20px'
             }}>
                 <h1 style={{
@@ -60,23 +34,53 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
                 }}>
                     {data.fullName}
                 </h1>
+                {data.jobTitle && (
+                    <div style={{
+                        fontSize: '14pt',
+                        fontWeight: '600',
+                        color: data.accentColor || '#333',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase'
+                    }}>
+                        {data.jobTitle}
+                    </div>
+                )}
                 <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, auto)',
+                    columnGap: '40px',
+                    rowGap: '8px',
                     fontSize: '9.5pt',
                     color: '#333',
-                    marginBottom: '10px'
+                    marginTop: '15px',
+                    justifyContent: 'flex-start'
                 }}>
                     {[
-                        data.location,
-                        data.phone,
-                        data.email,
-                        data.linkedin,
-                        data.github,
-                        data.portfolio
-                    ].filter(Boolean).map((info, idx, arr) => (
-                        <React.Fragment key={idx}>
-                            <span>{info}</span>
-                            {idx < arr.length - 1 && <span style={{ margin: '0 8px', color: '#ccc' }}>|</span>}
-                        </React.Fragment>
+                        data.location && <span>{data.location}</span>,
+                        data.phone && <span>{data.phone}</span>,
+                        data.email && <span>{data.email}</span>,
+                        data.linkedin && <span>{data.linkedin.replace('linkedin.com/in/', '').replace('https://', '')}</span>,
+                        data.github && <span>{data.github.replace('github.com/', '').replace('https://', '')}</span>,
+                        data.portfolio && <span>{data.portfolio.replace('https://', '').replace('www.', '')}</span>,
+                        ...(data.customContacts ? data.customContacts.filter(c => {
+                             const l = c.label.toLowerCase();
+                             if (l.includes('linkedin') && data.linkedin) return false;
+                             if (l.includes('github') && data.github) return false;
+                             if ((l.includes('portfolio') || l.includes('website')) && data.portfolio) return false;
+                             if (l.includes('email') && data.email) return false;
+                             if (l.includes('phone') && data.phone) return false;
+                             if (l.includes('location') && data.location) return false;
+                             return true;
+                        }).map((c, i) => (
+                            <span key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                                <strong style={{ fontWeight: '700', color: '#000', marginRight: '8px' }}>{c.label}:</strong>
+                                {c.value.replace(/^https?:\/\//, '')}
+                            </span>
+                        )) : [])
+                    ].filter(Boolean).map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: idx % 2 === 0 ? 'flex-start' : 'flex-start' }}>
+                            {item}
+                        </div>
                     ))}
                 </div>
             </header>
@@ -143,11 +147,37 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
                     {data.experience.map((exp, idx) => (
                         <div key={idx} style={{ marginBottom: '12px' }}>
                             <div style={{
-                                fontWeight: 'bold',
-                                fontSize: '11pt',
-                                marginBottom: '4px'
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'baseline',
+                                marginBottom: '2px'
                             }}>
-                                {exp.title} | {exp.company} | {exp.duration}
+                                <h3 style={{
+                                    fontSize: '11pt',
+                                    fontWeight: 'bold',
+                                    color: '#000',
+                                    margin: 0
+                                }}>
+                                    {exp.title}
+                                </h3>
+                                <span style={{
+                                    fontSize: '10pt',
+                                    color: '#555',
+                                    fontStyle: 'italic'
+                                }}>
+                                    {exp.duration}
+                                </span>
+                            </div>
+                            <div style={{ fontWeight: '700', fontSize: '10.5pt', marginBottom: '6px', display: 'flex', alignItems: 'center' }}>
+                                {exp.company}
+                                {exp.location && (
+                                    <>
+                                        <span style={{ margin: '0 8px', color: '#ccc', fontWeight: '300' }}>|</span>
+                                        <span style={{ fontSize: '10pt', color: '#666', fontStyle: 'italic', fontWeight: '400' }}>
+                                            {exp.location}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                             <ul style={{
                                 margin: 0,

@@ -103,3 +103,38 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Resume AI Bot floating button animation */
+@keyframes ai-bot-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+@keyframes ai-bot-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.ai-bot-float {
+  animation: ai-bot-float 3s ease-in-out infinite, ai-bot-pulse-ring 2.5s ease-out infinite;
+}
+
+.ai-bot-float:hover {
+  animation: none;
+  transform: scale(1.12);
+  transition: transform 0.2s ease;
+}

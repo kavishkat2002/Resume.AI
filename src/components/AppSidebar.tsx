@@ -25,6 +25,8 @@ import {
   Briefcase,
   User,
   LogOut,
+  LayoutTemplate,
+  Bot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,9 +50,11 @@ const menuItems = [
   {
     group: "Optimize",
     items: [
+      { title: "Templates", url: "/templates", icon: LayoutTemplate },
       { title: "Skills Matcher", url: "/skills", icon: Target },
       { title: "Resume Builder", url: "/resume", icon: FileCheck },
       { title: "ATS Score", url: "/ats-score", icon: BarChart3 },
+      { title: "Ask AI Assistant", url: "#ai-chat", icon: Bot, action: "open-ai" },
     ],
   },
   {
@@ -104,15 +108,28 @@ export function AppSidebar() {
                 {group.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        end
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                        activeClassName="bg-primary/10 text-primary font-medium"
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
+                      {item.action === "open-ai" ? (
+                        <button
+                          onClick={() => {
+                            // Dispatch custom event to open the AI bot widget
+                            window.dispatchEvent(new CustomEvent('open-ai-bot'));
+                          }}
+                          className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-left"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </button>
+                      ) : (
+                        <NavLink
+                          to={item.url}
+                          end
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                          activeClassName="bg-primary/10 text-primary font-medium"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

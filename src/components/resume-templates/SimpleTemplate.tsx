@@ -1,32 +1,6 @@
 import React from 'react';
-
-interface ResumeData {
-    fullName: string;
-    email: string;
-    phone: string;
-    location: string;
-    github?: string;
-    linkedin?: string;
-    portfolio?: string;
-    summary?: string;
-    skills: string[];
-    experience: Array<{
-        title: string;
-        company: string;
-        duration: string;
-        bullets: string[];
-    }>;
-    projects: Array<{
-        name: string;
-        description: string;
-        tech: string;
-    }>;
-    education: Array<{
-        degree: string;
-        institution: string;
-        year: string;
-    }>;
-}
+import { MapPin, Phone, Mail, Linkedin, Github, Globe } from 'lucide-react';
+import { ResumeData } from './index';
 
 interface SimpleTemplateProps {
     data: ResumeData;
@@ -58,14 +32,54 @@ export const SimpleTemplate: React.FC<SimpleTemplateProps> = ({ data }) => {
                 }}>
                     {data.fullName}
                 </h1>
+                {data.jobTitle && (
+                    <div style={{
+                        fontSize: '14pt',
+                        fontWeight: '600',
+                        color: data.accentColor || '#333',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase'
+                    }}>
+                        {data.jobTitle}
+                    </div>
+                )}
                 <div style={{
-                    fontSize: '10pt',
-                    color: '#7f8c8d',
-                    lineHeight: '1.6'
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, auto)',
+                    columnGap: '20px',
+                    rowGap: '8px',
+                    fontSize: '9.5pt',
+                    color: '#4B5563',
+                    marginTop: '10px',
+                    justifyContent: 'flex-start'
                 }}>
-                    {[data.email, data.phone, data.location, data.linkedin, data.github, data.portfolio]
-                        .filter(Boolean)
-                        .join(' | ')}
+                    {[
+                        data.location && <span style={{display: 'flex', alignItems: 'center'}}><MapPin size={14} style={{marginRight: '6px', color: '#666'}} /> {data.location}</span>,
+                        data.phone && <span style={{display: 'flex', alignItems: 'center'}}><Phone size={14} style={{marginRight: '6px', color: '#666'}} /> {data.phone}</span>,
+                        data.email && <span style={{display: 'flex', alignItems: 'center'}}><Mail size={14} style={{marginRight: '6px', color: '#666'}} /> {data.email}</span>,
+                        data.linkedin && <span style={{display: 'flex', alignItems: 'center'}}><Linkedin size={14} style={{marginRight: '6px', color: '#666'}} /> {data.linkedin.replace('linkedin.com/in/', '').replace('https://', '')}</span>,
+                        data.github && <span style={{display: 'flex', alignItems: 'center'}}><Github size={14} style={{marginRight: '6px', color: '#666'}} /> {data.github.replace('github.com/', '').replace('https://', '')}</span>,
+                        data.portfolio && <span style={{display: 'flex', alignItems: 'center'}}><Globe size={14} style={{marginRight: '6px', color: '#666'}} /> {data.portfolio.replace('https://', '').replace('www.', '')}</span>,
+                        ...(data.customContacts ? data.customContacts.filter(c => {
+                             const l = c.label.toLowerCase();
+                             if (l.includes('linkedin') && data.linkedin) return false;
+                             if (l.includes('github') && data.github) return false;
+                             if ((l.includes('portfolio') || l.includes('website')) && data.portfolio) return false;
+                             if (l.includes('email') && data.email) return false;
+                             if (l.includes('phone') && data.phone) return false;
+                             if (l.includes('location') && data.location) return false;
+                             return true;
+                        }).map((c, i) => (
+                            <span key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                                <strong style={{ fontWeight: '700', color: '#111827', marginRight: '6px' }}>{c.label}:</strong>
+                                {c.value.replace(/^https?:\/\//, '')}
+                            </span>
+                        )) : [])
+                    ].filter(Boolean).map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center' }}>
+                            {item}
+                        </div>
+                    ))}
                 </div>
             </header>
 
@@ -180,11 +194,22 @@ export const SimpleTemplate: React.FC<SimpleTemplateProps> = ({ data }) => {
                                 </span>
                             </div>
                             <p style={{
-                                fontSize: '10.5pt',
-                                color: '#7f8c8d',
-                                margin: '0 0 6px 0'
+                                fontSize: '11pt',
+                                fontWeight: '700',
+                                color: '#333',
+                                margin: '0 0 6px 0',
+                                display: 'flex',
+                                alignItems: 'center'
                             }}>
                                 {exp.company}
+                                {exp.location && (
+                                    <>
+                                        <span style={{ margin: '0 8px', color: '#ccc', fontWeight: '300' }}>|</span>
+                                        <span style={{ fontSize: '10pt', color: '#666', fontStyle: 'italic', fontWeight: '400' }}>
+                                            {exp.location}
+                                        </span>
+                                    </>
+                                )}
                             </p>
                             <ul style={{
                                 margin: 0,

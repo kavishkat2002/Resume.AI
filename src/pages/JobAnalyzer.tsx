@@ -230,34 +230,45 @@ Responsibilities:
 
         <div className="grid gap-8">
           {/* Input Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Job Description
-              </CardTitle>
-              <CardDescription>
-                Paste the full job description below
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Company Name (optional)</label>
-                <input
-                  type="text"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  placeholder="e.g., Google, Microsoft"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                />
+          <Card className="shadow-md border-zinc-200 dark:border-zinc-800">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Analyze Job Posting</CardTitle>
+                  <CardDescription>
+                    Provide the job details to extract requirements and keywords
+                  </CardDescription>
+                </div>
               </div>
-              <Textarea
-                placeholder="Paste the job description here..."
-                className="min-h-[300px]"
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-              />
-              <div className="flex flex-col sm:flex-row gap-4">
+            </CardHeader>
+            <CardContent className="space-y-5 pt-2">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Company Name (Optional)</label>
+                  <input
+                    type="text"
+                    className="flex h-11 w-full rounded-xl border border-input bg-zinc-50 dark:bg-zinc-900/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all"
+                    placeholder="e.g., Google, Microsoft, Startup Inc."
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Job Description</label>
+                  <Textarea
+                    placeholder="Paste the full job description here (Responsibilities, Requirements, etc.)..."
+                    className="min-h-[350px] rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border-input focus:bg-white dark:focus:bg-zinc-900 transition-all resize-y p-4 text-sm leading-relaxed"
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Button
                   onClick={handleAnalyze}
                   disabled={analyzing || !jobDescription.trim()}
@@ -478,7 +489,13 @@ Responsibilities:
                       state={{
                         jobTitle: result.job_title,
                         keywords: result.keywords.join(", "),
-                        skills: result.required_skills.join(", ")
+                        skills: result.required_skills.join(", "),
+                        additionalSkills: [
+                          ...result.preferred_skills,
+                          ...result.soft_skills,
+                          ...result.tools
+                        ].join(", "),
+                        responsibilities: result.responsibilities.join("\n")
                       }}
                       className="flex-1"
                     >

@@ -38,50 +38,86 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchStats();
-    }
+    fetchStats();
   }, [user]);
 
   const fetchStats = async () => {
-    if (!user) return;
-
-    const { count: resumeCount } = await supabase
-      .from("resumes")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
-
-    const { count: jobCount } = await supabase
-      .from("jobs")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
-
-    const { data: resumes } = await supabase
-      .from("resumes")
-      .select("ats_score")
-      .eq("user_id", user.id);
-
-    const avgScore = resumes && resumes.length > 0
-      ? Math.round(resumes.reduce((acc, r) => acc + (r.ats_score || 0), 0) / resumes.length)
-      : 0;
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
+    let resumeCount = 0;
+    let jobCount = 0;
+    let avgScore = 0;
     let profileComplete = 0;
-    if (profile) {
-      const fields = ['full_name', 'location', 'professional_summary', 'github_username'];
-      const filled = fields.filter(f => profile[f as keyof typeof profile]).length;
-      profileComplete = Math.round((filled / fields.length) * 100);
+
+    // 1. Fetch from Local Storage (Fallback/Unauthenticated usage)
+    if (localStorage.getItem('resume_resumeText')) {
+      resumeCount = 1;
+    }
+    
+    if (localStorage.getItem('job_analysis_result')) {
+      jobCount = 1;
+    }
+    
+    try {
+      if (localStorage.getItem('ats_score_result')) {
+        const atsResult = JSON.parse(localStorage.getItem('ats_score_result') || '{}');
+        if (atsResult && typeof atsResult.ats_score === 'number') {
+          avgScore = atsResult.ats_score;
+        }
+      }
+    } catch(e) {}
+
+    // Checking if profile is partly filled locally from resume builder
+    const localFields = ['resume_fullName', 'resume_location', 'resume_summary', 'resume_github'];
+    const filled = localFields.filter(f => !!localStorage.getItem(f)).length;
+    profileComplete = Math.round((filled / localFields.length) * 100);
+
+    // 2. Fetch from Supabase (If user is authenticated)
+    if (user) {
+      try {
+        const { count: dbResumeCount } = await supabase
+          .from("resumes")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
+        
+        if (dbResumeCount !== null) resumeCount = Math.max(resumeCount, dbResumeCount);
+
+        const { count: dbJobCount } = await supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
+        
+        if (dbJobCount !== null) jobCount = Math.max(jobCount, dbJobCount);
+
+        const { data: resumes } = await supabase
+          .from("resumes")
+          .select("ats_score")
+          .eq("user_id", user.id);
+
+        if (resumes && resumes.length > 0) {
+          const dbAvgScore = Math.round(resumes.reduce((acc, r) => acc + (r.ats_score || 0), 0) / resumes.length);
+          avgScore = Math.max(avgScore, dbAvgScore);
+        }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (profile) {
+          const dbFields = ['full_name', 'location', 'professional_summary', 'github_username'];
+          const dbFilled = dbFields.filter(f => profile[f as keyof typeof profile]).length;
+          const dbProfileComplete = Math.round((dbFilled / dbFields.length) * 100);
+          profileComplete = Math.max(profileComplete, dbProfileComplete);
+        }
+      } catch (err) {
+        console.error("Supabase fetch error on mapping stats:", err);
+      }
     }
 
     setStats({
-      totalResumes: resumeCount || 0,
+      totalResumes: resumeCount,
       avgAtsScore: avgScore,
-      jobsAnalyzed: jobCount || 0,
+      jobsAnalyzed: jobCount,
       profileComplete,
     });
   };

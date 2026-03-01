@@ -22,6 +22,8 @@ serve(async (req) => {
       jobKeywords,
       projects,
       skills,
+      additionalSkills,
+      jobDescription,
       education,
       experience,
       fullName,
@@ -104,20 +106,26 @@ serve(async (req) => {
         console.log("LOGIC_FLOW: RESUME_PATH_ACTIVATED");
         systemPrompt = `Generate a high-quality, ATS-optimized resume.
         
-        CRITICAL RULES FOR PROJECTS:
+        CRITICAL RULES:
+        - If 'jobDescription' is provided, TAILOR the professional summary and experience bullets to match the requirements and responsibilities.
+        - DYNAMIC SKILL CATEGORIZATION: Group skills into specifically relevant categories based on the job description's focus (e.g., instead of generic "Soft Skills," use "Communication" or "Delivery" if that's the job's focus).
+        - Aim for 4-6 balanced categories like "Core Tools", "Development & Platform", "Delivery & Process", "Strategy & Soft Skills".
+        - Each category MUST be in "Category Name: Skill 1, Skill 2, ..." format.
+        - Merge 'skills' and 'additionalSkills' into these categories.
         - Use PROVIDED projects. If empty, suggest 3 high-impact tech projects.
-        - Label suggestions as "RECOMMENDED PROJECTS".
         
         LAYOUT:
-        - Professional Summary, Technical Skills (List), Projects, Experience, Education.
+        - Professional Summary, CORE SKILLS (List with Categories), Projects, Experience, Education.
         - CAPS HEADERS for sections.
         - Bullet points for descriptions.`;
 
         userPrompt = `Generate an ATS-optimized resume for:
         FullName: ${fullName || "Your Name"}
         Target Job: ${jobTitle}
+        ${jobDescription ? `Context Job Description: ${jobDescription}\n` : ""}
         Search Keywords: ${JSON.stringify(jobKeywords || [])}
         Skills: ${JSON.stringify(skills || [])}
+        Additional Skills (Soft/Tools/Preferred): ${JSON.stringify(additionalSkills || [])}
         Projects: ${projects && projects.length > 0 ? JSON.stringify(projects) : "PROJECTS EMPTY - SUGGEST 3."}
         Experience: ${JSON.stringify(experience || [])}
         Education: ${JSON.stringify(education || [])}`;
