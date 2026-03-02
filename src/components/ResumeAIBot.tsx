@@ -18,7 +18,7 @@ export const ResumeAIBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I am your Resume.AI career advisor equipped with a 4-Tier Agentic Memory. I know your current stats and progress. How can I help you today?",
+      content: "Hello! I am your ResumAI career advisor equipped with a 4-Tier Agentic Memory. I know your current stats and progress. How can I help you today?",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -134,7 +134,7 @@ PAST ACTIVITIES:
       setMessages((prev) => [...prev, { role: "assistant", content: aiResponse }]);
     } catch (error) {
       console.error("AI Bot Error:", error);
-      toast.error("Failed to connect to Resume.AI Bot");
+      toast.error("Failed to connect to ResumAI Bot");
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "Oops! There was an issue processing your request. Please try again." },
@@ -172,8 +172,7 @@ PAST ACTIVITIES:
                 <img src="/ai-bot-icon.png" alt="Resume AI" className="w-full h-full object-contain" />
               </div>
               <div>
-                <CardTitle className="text-sm font-semibold tracking-wide text-foreground">Resume.AI Assistant</CardTitle>
-                <p className="text-[10px] text-muted-foreground">4-Tier Agentic Memory • Powered by Creative LabX</p>
+                <CardTitle className="text-sm font-semibold tracking-wide text-foreground">ResumAI Assistant</CardTitle>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -261,7 +260,7 @@ PAST ACTIVITIES:
               </Button>
             </div>
             <div className="text-[10px] text-zinc-400 text-center mt-2 font-medium">
-              Uses 4-Tier Agentic Memory Architecture. ©️Creative LabX
+              4-Tier Agentic Memory • Powered by Creative LabX
             </div>
           </div>
         </Card>
