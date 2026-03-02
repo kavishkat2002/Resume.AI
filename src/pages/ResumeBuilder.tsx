@@ -2127,7 +2127,7 @@ const ResumeBuilder = () => {
                         size="sm" 
                         variant="default" 
                         onClick={() => setSkillGroups([...skillGroups, { id: crypto.randomUUID(), name: "", items: "" }])}
-                        className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+                        className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold"
                       >
                         Add group
                       </Button>
@@ -2182,7 +2182,7 @@ const ResumeBuilder = () => {
                 <div className="flex items-center justify-between mb-6 border-b pb-4">
                   <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Experience</h3>
                   <Button 
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md h-9"
+                    className="bg-zinc-900 hover:bg-zinc-800 text-white font-semibold shadow-md h-9"
                     onClick={() => setWorkExperience([...workExperience, { id: crypto.randomUUID(), title: "", company: "", location: "", dates: "", bullets: "" }])}
                   >
                     Add role
@@ -2299,7 +2299,7 @@ const ResumeBuilder = () => {
                     </Button>
                     <Button 
                       size="sm" 
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-8 text-[11px] uppercase tracking-wider shadow-md px-4"
+                      className="bg-zinc-900 hover:bg-zinc-800 text-white font-bold h-8 text-[11px] uppercase tracking-wider shadow-md px-4"
                       onClick={() => setProjectList([...projectList, { id: crypto.randomUUID(), name: "", tech: "", dates: "", bullets: "" }])}
                     >
                       <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Add Project
@@ -2413,7 +2413,7 @@ const ResumeBuilder = () => {
                     size="sm" 
                     variant="default" 
                     onClick={() => setEduList([...eduList, { id: crypto.randomUUID(), degree: "", school: "", dates: "", details: "" }])}
-                    className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm px-4"
+                    className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold shadow-sm px-4"
                   >
                     Add education
                   </Button>
@@ -2505,7 +2505,7 @@ const ResumeBuilder = () => {
                     size="sm" 
                     variant="default" 
                     onClick={() => setCertList([...certList, { id: crypto.randomUUID(), name: "", issuer: "", date: "" }])}
-                    className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm px-4"
+                    className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold shadow-sm px-4"
                   >
                     Add certification
                   </Button>
@@ -2592,7 +2592,7 @@ const ResumeBuilder = () => {
                     size="sm" 
                     variant="default" 
                     onClick={() => setPubList([...pubList, { id: crypto.randomUUID(), title: "", publisher: "", date: "" }])}
-                    className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm px-4"
+                    className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold shadow-sm px-4"
                   >
                     Add publication
                   </Button>
@@ -2679,7 +2679,7 @@ const ResumeBuilder = () => {
                     size="sm" 
                     variant="default" 
                     onClick={() => setRefList([...refList, { id: crypto.randomUUID(), name: "", role: "", organization: "", phone: "", email: "" }])}
-                    className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm px-4"
+                    className="h-8 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold shadow-sm px-4"
                   >
                     Add reference
                   </Button>
