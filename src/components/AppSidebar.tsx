@@ -53,7 +53,6 @@ const menuItems = [
       { title: "Templates", url: "/templates", icon: LayoutTemplate },
       { title: "Skills Matcher", url: "/skills", icon: Target },
       { title: "Resume Builder", url: "/resume", icon: FileCheck },
-      { title: "ATS Score", url: "/ats-score", icon: BarChart3 },
       { title: "Ask AI Assistant", url: "#ai-chat", icon: Bot, action: "open-ai" },
     ],
   },
