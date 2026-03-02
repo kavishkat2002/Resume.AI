@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Footer } from "@/components/Footer";
 
 const GoogleIcon = () => (
   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
@@ -182,7 +183,7 @@ const Auth = () => {
         <div className="container mx-auto px-4 py-4">
           <Link to="/" className="flex items-center gap-2 w-fit">
             <Sparkles className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">ResumeAI</span>
+            <span className="text-xl font-bold">ResumAI</span>
           </Link>
         </div>
       </header>
@@ -191,7 +192,7 @@ const Auth = () => {
       <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome to ResumeAI</CardTitle>
+            <CardTitle className="text-2xl">Welcome to ResumAI</CardTitle>
             <CardDescription>
               Create ATS-optimized resumes that land interviews
             </CardDescription>
@@ -338,6 +339,7 @@ const Auth = () => {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 };

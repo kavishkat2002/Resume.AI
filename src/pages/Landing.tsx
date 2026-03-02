@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { FileText, Target, Sparkles, Send, CheckCircle, TrendingUp, Users } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 const Landing = () => {
   const steps = [
@@ -73,7 +74,7 @@ const Landing = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">ResumeAI</span>
+            <span className="text-xl font-bold">ResumAI</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/auth">
@@ -209,17 +210,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 px-4">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="font-semibold">ResumeAI</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            © 2026 ResumeAI. Helping you land your dream job.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

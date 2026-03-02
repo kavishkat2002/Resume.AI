@@ -17,6 +17,8 @@ import ApplicationTracker from "./pages/ApplicationTracker";
 import Profile from "./pages/Profile";
 import Templates from "./pages/Templates";
 import TemplatePreview from "./pages/TemplatePreview";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +44,8 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/template/:id" element={<TemplatePreview />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

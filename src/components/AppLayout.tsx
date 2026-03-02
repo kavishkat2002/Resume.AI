@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { ResumeAIBot } from "./ResumeAIBot";
+import { Footer } from "./Footer";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -56,8 +57,11 @@ export function AppLayout({ children }: AppLayoutProps) {
               </span>
             )}
           </header>
-          <div className="flex-1 overflow-auto">
-            {children}
+          <div className="flex-1 overflow-auto flex flex-col">
+            <div className="flex-1">
+              {children}
+            </div>
+            <Footer />
           </div>
         </main>
         <ResumeAIBot />
