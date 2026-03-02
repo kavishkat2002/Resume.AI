@@ -94,9 +94,9 @@ const Landing = () => {
             <Sparkles className="h-4 w-4" />
             AI-Powered Resume Optimization
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 leading-tight">
             Land Your Dream Job with{" "}
-            <span className="text-primary">ATS-Optimized</span> Resumes
+            <span className="text-4xl md:text-6xl text-primary">ATS-Optimized</span> Resumes
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Our AI analyzes job descriptions, matches your skills, and generates perfectly tailored resumes that pass ATS systems and impress recruiters.
@@ -187,6 +187,49 @@ const Landing = () => {
                   <p className="text-muted-foreground">{feature.description}</p>
                 </CardContent>
               </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Templates Section with Black Theme Heading */}
+      <section className="py-20 px-4 bg-zinc-950 text-white">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4 border border-blue-500/20">
+                <Sparkles className="h-3 w-3" />
+                Templates
+              </div>
+              <h1 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">
+              Premium Resume <span className="text-blue-500">Templates</span>
+            </h1>
+              <p className="text-zinc-400 text-lg">
+                Our template library contains professionally crafted designs that pass through Applicant Tracking Systems 
+                with ease while catching the eyes of human hiring managers.
+              </p>
+            </div>
+            <Link to="/auth">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white border-none px-8 h-14 rounded-xl text-lg font-bold">
+                View All Templates
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: "Modern Professional", type: "Tech-Focused", color: "from-blue-600 to-indigo-600" },
+              { name: "Executive Suite", type: "Leadership", color: "from-purple-600 to-pink-600" },
+              { name: "Creative Minimal", type: "Design & Arts", color: "from-amber-500 to-orange-600" }
+            ].map((t, i) => (
+              <div key={i} className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-zinc-900 border border-zinc-800 hover:border-blue-500/50 transition-all duration-500">
+                <div className={`absolute inset-0 bg-gradient-to-br ${t.color} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
+                <div className="absolute inset-0 flex flex-col justify-end p-8">
+                  <span className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-2">{t.type}</span>
+                  <h3 className="text-2xl font-bold mb-4">{t.name}</h3>
+                  <div className="h-1 w-12 bg-blue-500 group-hover:w-full transition-all duration-500"></div>
+                </div>
+              </div>
             ))}
           </div>
         </div>

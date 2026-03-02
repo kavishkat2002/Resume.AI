@@ -64,7 +64,7 @@ const Terms = () => {
             
             <footer className="mt-12 pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground">
-                For legal inquiries, please contact us at legal@creativelab.com
+                For legal inquiries, please contact us at info.kavishkathilakarathna@gmail.com
                 <br />
                 © 2026 Creative Lab. All rights reserved.
               </p>

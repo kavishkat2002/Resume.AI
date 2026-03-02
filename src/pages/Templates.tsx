@@ -85,6 +85,25 @@ export default function Templates() {
   return (
     <AppLayout>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12">
+        {/* Template Section Heading in Black Theme */}
+        <div className="bg-zinc-900 rounded-3xl p-8 md:p-12 mb-12 text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4 border border-blue-500/20">
+              <Sparkles className="h-3 w-3" />
+              Professional Designs
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+              Premium Resume <span className="text-blue-500">Templates</span>
+            </h1>
+            <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
+              Choose from our curated collection of ATS-optimized templates designed by recruitment experts 
+              to help you land your dream role.
+            </p>
+          </div>
+        </div>
         {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-zinc-900 dark:text-zinc-100">
           <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-800 flex items-center gap-4">

@@ -60,7 +60,7 @@ const Privacy = () => {
             
             <footer className="mt-12 pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground">
-                For questions regarding this policy, please contact us at support@creativelab.com
+                For questions regarding this policy, please contact us at info.kavishkathilakarathna@gmail.com
               </p>
             </footer>
           </CardContent>
