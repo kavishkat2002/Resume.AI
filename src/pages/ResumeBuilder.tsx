@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, FileText, Download, Copy, Sparkles, User, Briefcase, GraduationCap, FolderGit2, Edit, Save, History, Clock, RotateCcw, Type, AlignLeft, LayoutGrid, Settings2, Eye } from "lucide-react";
+import { Loader2, FileText, Download, Copy, Sparkles, User, Briefcase, GraduationCap, FolderGit2, Edit, Save, History, Clock, RotateCcw, Type, AlignLeft, LayoutGrid, Settings2, Eye, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { jsPDF } from "jspdf";
 import {
@@ -106,6 +106,20 @@ const ResumeBuilder = () => {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [currentResumeId, setCurrentResumeId] = useState<string | null>(() => localStorage.getItem("resume_history_current_id"));
   const [isAddingToTracker, setIsAddingToTracker] = useState(false);
+  
+  // ATS Score State
+  const [atsScore, setAtsScore] = useState<{
+    ats_score: number;
+    matched_keywords: string[];
+    missing_keywords: string[];
+    keyword_frequency: Record<string, number>;
+    section_analysis: any;
+    improvement_tips: string[];
+    critical_gaps: string[];
+    strength_areas: string[];
+    overall_assessment: string;
+  } | null>(null);
+  const [isCalculatingScore, setIsCalculatingScore] = useState(false);
 
   // Layout Adjustments State
   const [fontSize, setFontSize] = useState(100);
@@ -121,6 +135,47 @@ const ResumeBuilder = () => {
     if (saved) return JSON.parse(saved);
     return [];
   });
+
+  const calculateATS = async (resumeText: string, keywords: string) => {
+    if (!resumeText.trim()) return;
+    
+    if (!keywords.trim()) {
+      console.log("ATS Scan skipped: No keywords provided.");
+      return;
+    }
+    
+    console.log("ATS Scan starting for keywords:", keywords.substring(0, 50) + "...");
+    setIsCalculatingScore(true);
+    setAtsScore(null); // Reset previous score while scanning
+    
+    try {
+      const { data, error } = await supabase.functions.invoke("calculate-ats-score", {
+        body: {
+          jobKeywords: parseCommaSeparated(keywords),
+          resumeContent: resumeText,
+        },
+      });
+
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw error;
+      }
+      
+      if (!data) {
+        throw new Error("No data returned from ATS analysis");
+      }
+
+      console.log("ATS Scan successful:", data.ats_score);
+      setAtsScore(data);
+      localStorage.setItem("resume_builder_ats_score", JSON.stringify(data));
+    } catch (error: any) {
+      console.error("Error calculating ATS score:", error);
+      toast.error(error.message || "Failed to calculate ATS score. Please try again.");
+    } finally {
+      setIsCalculatingScore(false);
+      console.log("ATS Scan process finalized.");
+    }
+  };
 
   const handleResetLayout = () => {
     setFontSize(100);
@@ -491,6 +546,11 @@ const ResumeBuilder = () => {
     setSelectedTemplate(historyItem.template_id || 'modern');
     setCurrentResumeId(historyItem.id);
 
+    // Auto-calculate ATS Score when loading from history
+    if (historyItem.resume_text && historyItem.job_keywords?.length > 0) {
+      calculateATS(historyItem.resume_text, historyItem.job_keywords.join(", "));
+    }
+
     toast.success("Loaded resume from history!");
   };
 
@@ -765,6 +825,12 @@ const ResumeBuilder = () => {
 
         // Save to history
         await saveResumeToHistory(generatedContent);
+        
+        // Auto-calculate ATS Score if keywords exist
+        if (jobKeywords.trim()) {
+          calculateATS(generatedContent, jobKeywords);
+        }
+        
         toast.success("Resume generated successfully!");
       } else {
         const errorMsg = data?.error || "Invalid response format from server";
@@ -2742,7 +2808,90 @@ const ResumeBuilder = () => {
               </CardTitle>
               <CardDescription>Choose from 5 professional ATS-optimized templates</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
+              {/* ATS Score Display */}
+              {resume && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 md:p-6 mb-6 text-white shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-600/10 transition-colors"></div>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                      <div className="relative h-24 w-24 flex-shrink-0">
+                        <svg className="h-full w-full transform -rotate-90">
+                          <circle
+                            cx="48"
+                            cy="48"
+                            r="44"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="transparent"
+                            className="text-zinc-800"
+                          />
+                          <circle
+                            cx="48"
+                            cy="48"
+                            r="44"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="transparent"
+                            strokeDasharray={2 * Math.PI * 44}
+                            strokeDashoffset={2 * Math.PI * 44 * (1 - (atsScore?.ats_score || 0) / 100)}
+                            className={`${(atsScore?.ats_score || 0) >= 80 ? 'text-emerald-500' : (atsScore?.ats_score || 0) >= 60 ? 'text-amber-500' : 'text-rose-500'} transition-all duration-1000 ease-out`}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-2xl font-black">{isCalculatingScore ? '...' : (atsScore?.ats_score || 0)}%</span>
+                          <span className="text-[8px] font-bold tracking-widest uppercase opacity-50">Match</span>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 text-center md:text-left">
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                          <div className={`h-2 w-2 rounded-full animate-pulse ${(atsScore?.ats_score || 0) >= 80 ? 'bg-emerald-500' : (atsScore?.ats_score || 0) >= 60 ? 'bg-amber-500' : 'bg-rose-500'}`}></div>
+                          <span className="text-xs font-bold tracking-widest uppercase text-zinc-400">ATS Compatibility Analysis</span>
+                        </div>
+                        <h4 className="text-lg font-bold mb-2">
+                          {isCalculatingScore ? 'Analyzing compatibility...' : (atsScore?.ats_score || 0) >= 80 ? 'Excellent Match! Ready to Apply.' : (atsScore?.ats_score || 0) >= 60 ? 'Strong Match with Minor Gaps.' : 'Needs Optimization for this Role.'}
+                        </h4>
+                        <p className="text-sm text-zinc-400 max-w-md line-clamp-2">
+                          {atsScore?.overall_assessment || 'Generate a detailed analysis to see how your resume stacks up against the job requirements.'}
+                        </p>
+                      </div>
+
+                      <Button 
+                        size="sm" 
+                        onClick={() => calculateATS(resume, jobKeywords)} 
+                        disabled={isCalculatingScore}
+                        className="bg-white text-zinc-900 hover:bg-zinc-200 font-bold px-6 h-10 rounded-xl flex-shrink-0"
+                      >
+                        {isCalculatingScore ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4 mr-2" />}
+                        Re-Scan
+                      </Button>
+                    </div>
+
+                    {atsScore && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/5">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Matched</p>
+                          <p className="text-lg font-bold text-emerald-500">{atsScore.matched_keywords.length}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Missing</p>
+                          <p className="text-lg font-bold text-rose-500">{atsScore.missing_keywords.length}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Gaps</p>
+                          <p className="text-lg font-bold text-amber-500">{atsScore.critical_gaps.length}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Strengths</p>
+                          <p className="text-lg font-bold text-blue-500">{atsScore.strength_areas.length}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               {resume ? (
                 <>
                   <div className="flex justify-end gap-2 mb-2">
