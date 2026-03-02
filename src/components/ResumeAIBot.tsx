@@ -173,7 +173,7 @@ PAST ACTIVITIES:
               </div>
               <div>
                 <CardTitle className="text-sm font-semibold tracking-wide text-foreground">Resume.AI Assistant</CardTitle>
-                <p className="text-[10px] text-muted-foreground">4-Tier Agentic Memory • Powered by AI</p>
+                <p className="text-[10px] text-muted-foreground">4-Tier Agentic Memory • Powered by Creative LabX</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -261,7 +261,7 @@ PAST ACTIVITIES:
               </Button>
             </div>
             <div className="text-[10px] text-zinc-400 text-center mt-2 font-medium">
-              Uses 4-Tier Agentic Memory Architecture
+              Uses 4-Tier Agentic Memory Architecture. ©️Creative LabX
             </div>
           </div>
         </Card>
