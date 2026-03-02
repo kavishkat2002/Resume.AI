@@ -231,8 +231,8 @@ PAST ACTIVITIES:
                 <div className="h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                   <Bot className="h-4 w-4" />
                 </div>
-                <div className="bg-card border border-border rounded-2xl rounded-tl-none p-3 shadow-sm">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <div className="bg-card border border-border rounded-2xl rounded-tl-none p-3 shadow-sm flex items-center">
+                  <span className="text-xs text-primary font-bold tracking-wider animate-tight-blink">Recruiting...</span>
                 </div>
               </div>
             )}
