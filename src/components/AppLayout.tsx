@@ -52,7 +52,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <SidebarTrigger className="mr-4" />
             <div className="flex-1" />
             {user && (
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground truncate max-w-[150px] sm:max-w-[200px] md:max-w-none">
                 {user.email}
               </span>
             )}

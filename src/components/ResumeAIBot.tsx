@@ -157,7 +157,7 @@ PAST ACTIVITIES:
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="ai-bot-float fixed bottom-20 right-6 h-16 w-16 rounded-full shadow-lg p-0 bg-[#0f1c4d] z-50 overflow-hidden border-2 border-white/20"
+          className="ai-bot-float fixed bottom-6 right-6 md:bottom-20 h-16 w-16 rounded-full shadow-lg p-0 bg-[#0f1c4d] z-50 overflow-hidden border-2 border-white/20"
         >
           <img src="/ai-bot-icon.png" alt="Resume AI Bot" className="w-full h-full object-contain" />
         </Button>
@@ -165,7 +165,7 @@ PAST ACTIVITIES:
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className={`fixed ${isExpanded ? 'inset-0 w-full h-full md:inset-[5%] md:w-[90%] md:h-[90%] md:rounded-2xl z-[100]' : 'bottom-20 right-6 w-80 md:w-96 h-[500px] rounded-xl z-50'} shadow-xl flex flex-col overflow-hidden border-border bg-card transition-all duration-300 ease-in-out`}>
+        <Card className={`fixed ${isExpanded ? 'inset-0 w-full h-full md:inset-[5%] md:w-[90%] md:h-[90%] md:rounded-2xl z-[100]' : 'bottom-4 right-4 left-4 md:left-auto md:bottom-20 md:right-6 w-auto md:w-96 h-[500px] rounded-xl z-50'} shadow-xl flex flex-col overflow-hidden border-border bg-card transition-all duration-300 ease-in-out`}>
           <CardHeader className="bg-card border-b border-border p-3 flex flex-row items-center justify-between shadow-sm flex-shrink-0">
               <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full overflow-hidden bg-[#0f1c4d] flex-shrink-0">
