@@ -1,6 +1,6 @@
 import { ResumeData } from './index';
 
-export const generateATSHTML = (data: ResumeData, template: 'modern' | 'classic' | 'executive' | 'minimalist' | 'professional' | 'elegant' | 'techblue'): string => {
+export const generateATSHTML = (data: ResumeData, template: 'classic' | 'executive' | 'professional' | 'elegant' | 'techblue'): string => {
   const styles = getTemplateStyles(template, data.accentColor);
 
   const layoutStyle = data.layout ? `
@@ -377,7 +377,7 @@ export const generateATSHTML = (data: ResumeData, template: 'modern' | 'classic'
   `.trim();
 };
 
-const getTemplateStyles = (template: 'modern' | 'classic' | 'executive' | 'minimalist' | 'professional' | 'elegant' | 'techblue', accentColor?: string): string => {
+const getTemplateStyles = (template: 'classic' | 'executive' | 'professional' | 'elegant' | 'techblue', accentColor?: string): string => {
   const baseStyles = `
     * {
       margin: 0;
@@ -629,75 +629,7 @@ const getTemplateStyles = (template: 'modern' | 'classic' | 'executive' | 'minim
     }
   `;
 
-  if (template === 'modern') {
-    return baseStyles + `
-      .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 28px 32px;
-        margin: -14mm -20mm 25px -20mm;
-        text-align: left;
-      }
-      
-      .name {
-        font-size: 32pt;
-        font-weight: 700;
-        margin-bottom: 4px;
-        letter-spacing: 1px;
-      }
-
-      .job-title {
-        color: ${accentColor || 'rgba(255, 255, 255, 0.95)'};
-        margin-bottom: 12px;
-        font-weight: 700;
-        letter-spacing: 2px;
-      }
-      
-      .contact-info, .contact-links {
-        font-size: 10pt;
-        margin: 5px 0;
-        opacity: 0.95;
-      }
-      
-      .contact-links span {
-        margin: 0 10px;
-      }
-      
-      .section-title {
-        color: var(--accent-color);
-        border-bottom: 2px solid var(--accent-color);
-        padding-bottom: 4px;
-        letter-spacing: 2px;
-      }
-      
-      .skill-tag {
-        background: #f0f4ff;
-        color: #667eea;
-        border: 1px solid #d0d9ff;
-      }
-      
-      .exp-title, .project-title {
-        color: #667eea;
-      }
-      
-      .exp-company {
-        color: #764ba2;
-      }
-      
-      .exp-duration, .edu-year {
-        color: #7c3aed;
-      }
-      
-      .exp-company {
-        color: #764ba2;
-        font-weight: 700;
-      }
-      
-      .exp-location {
-        color: #666;
-      }
-    `;
-  } else if (template === 'classic') {
+  if (template === 'classic') {
     return baseStyles + `
       body {
         font-family: 'Georgia', 'Times New Roman', serif;
@@ -818,66 +750,6 @@ const getTemplateStyles = (template: 'modern' | 'classic' | 'executive' | 'minim
       .summary {
         font-size: 11.5pt;
         font-style: italic;
-      }
-    `;
-  } else if (template === 'minimalist') {
-    return baseStyles + `
-      body {
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-        color: #333;
-      }
-      
-      .header {
-        margin-bottom: 30px;
-      }
-      
-      .name {
-        font-size: 30pt;
-        font-weight: 300;
-        color: #000;
-        margin-bottom: 10px;
-        letter-spacing: -0.5px;
-      }
-      
-      .contact-info, .contact-links {
-        font-size: 9.5pt;
-        color: #666;
-        margin: 4px 0;
-        font-weight: 300;
-      }
-      
-      .section-title {
-        color: #000;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 6px;
-        font-size: 12pt;
-        font-weight: 600;
-      }
-      
-      .skill-tag {
-        background: #f5f5f5;
-        color: #333;
-        border: none;
-        font-weight: 400;
-      }
-      
-      .exp-title, .project-title {
-        color: #000;
-        font-weight: 600;
-      }
-      
-      .exp-company {
-        color: #666;
-        font-weight: 500;
-      }
-      
-      .exp-duration, .edu-year {
-        color: #999;
-        font-weight: 300;
-      }
-      
-      .exp-bullets {
-        font-weight: 300;
       }
     `;
   } else if (template === 'elegant') {

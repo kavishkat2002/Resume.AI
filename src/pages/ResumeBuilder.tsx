@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import html2canvas from 'html2canvas';
-import { ModernTemplate, ClassicTemplate, SimpleTemplate, ElegantTemplate, TEMPLATE_OPTIONS, generateATSHTML, type TemplateId, type ResumeData } from '@/components/resume-templates';
+import { ClassicTemplate, SimpleTemplate, ElegantTemplate, TEMPLATE_OPTIONS, LAYOUT_OPTIONS, generateATSHTML, type TemplateId, type LayoutId, type ResumeData } from '@/components/resume-templates';
 import { useRef } from 'react';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, SectionType, BorderStyle } from 'docx';
 import { saveAs } from 'file-saver';
@@ -37,6 +37,7 @@ const ResumeBuilder = () => {
   const searchParams = new URLSearchParams(routerLocation.search);
   const templateFromUrl = searchParams.get('template') as TemplateId | null;
   const locationState = routerLocation.state;
+  const initialLayout = templateFromUrl ? (TEMPLATE_OPTIONS.find(t => t.id === templateFromUrl)?.layoutId || 'professional') : 'professional';
   // 1. Initialize states from localStorage if available
   const [fullName, setFullName] = useState(() => localStorage.getItem("resume_fullName") || "");
   const [email, setEmail] = useState(() => localStorage.getItem("resume_email") || "");
@@ -100,7 +101,7 @@ const ResumeBuilder = () => {
   const [isAnalyzingJob, setIsAnalyzingJob] = useState(false);
   const [isEditingResume, setIsEditingResume] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState("pdf_modern");
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateId | 'txt' | 'docx'>(templateFromUrl || 'modern');
+  const [selectedTemplate, setSelectedTemplate] = useState<LayoutId | 'txt' | 'docx'>(initialLayout);
   const templateRef = useRef<HTMLDivElement>(null);
   const [resumeHistory, setResumeHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -543,7 +544,7 @@ const ResumeBuilder = () => {
     }
 
     setResume(historyItem.resume_text || "");
-    setSelectedTemplate(historyItem.template_id || 'modern');
+    setSelectedTemplate(historyItem.template_id || 'professional');
     setCurrentResumeId(historyItem.id);
 
     // Auto-calculate ATS Score when loading from history
@@ -1783,7 +1784,7 @@ const ResumeBuilder = () => {
                     <CardContent className="space-y-2 pb-3">
                       <div className="text-xs text-muted-foreground space-y-1">
                         <p className="line-clamp-1">
-                          <span className="font-medium">Template:</span> {item.template_id || 'modern'}
+                          <span className="font-medium">Template:</span> {item.template_id || 'professional'}
                         </p>
                         {item.job_keywords && item.job_keywords.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
@@ -1819,7 +1820,7 @@ const ResumeBuilder = () => {
                           className="h-7 px-2"
                           onClick={() => {
                             setResume(item.resume_text);
-                            setSelectedTemplate(item.template_id || 'modern');
+                            setSelectedTemplate(item.template_id || 'professional');
                             setCurrentResumeId(item.id);
                             handleDownload();
                           }}
@@ -2923,9 +2924,9 @@ const ResumeBuilder = () => {
                       <SelectContent>
                         <SelectItem value="docx">Word Document (.docx)</SelectItem>
                         <SelectItem value="txt">Plain Text (.txt)</SelectItem>
-                        {TEMPLATE_OPTIONS.map((template) => (
-                          <SelectItem key={template.id} value={template.id}>
-                            {template.name}
+                        {LAYOUT_OPTIONS.map((layout) => (
+                          <SelectItem key={layout.id} value={layout.id}>
+                            {layout.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

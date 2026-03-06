@@ -218,9 +218,9 @@ const Landing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Modern Professional", type: "Tech-Focused", color: "from-blue-600 to-indigo-600" },
+              { name: "Professional Clean", type: "Tech-Focused", color: "from-blue-600 to-indigo-600" },
               { name: "Executive Suite", type: "Leadership", color: "from-purple-600 to-pink-600" },
-              { name: "Creative Minimal", type: "Design & Arts", color: "from-amber-500 to-orange-600" }
+              { name: "Elegant Centered", type: "Design & Arts", color: "from-amber-500 to-orange-600" }
             ].map((t, i) => (
               <div key={i} className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-zinc-900 border border-zinc-800 hover:border-blue-500/50 transition-all duration-500">
                 <div className={`absolute inset-0 bg-gradient-to-br ${t.color} opacity-10 group-hover:opacity-20 transition-opacity`}></div>

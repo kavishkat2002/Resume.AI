@@ -73,16 +73,19 @@ const dummyData = {
 const TemplatePreview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const template = TEMPLATE_OPTIONS.find((t) => t.id === id) || TEMPLATE_OPTIONS.find((t) => t.id === "modern")!;
+  const template = TEMPLATE_OPTIONS.find((t) => t.id === id) || TEMPLATE_OPTIONS[0];
 
   const [htmlContent, setHtmlContent] = useState<string>("");
 
   // Form State
-  const [activeData, setActiveData] = useState(dummyData);
+  const [activeData, setActiveData] = useState({
+    ...dummyData,
+    fullName: template?.personName || dummyData.fullName,
+    jobTitle: template?.name || dummyData.jobTitle
+  });
   const [accentColor, setAccentColor] = useState(
-    template.id === 'modern' ? '#7c3aed' : 
-    template.id === 'professional' ? '#2563eb' : 
-    template.id === 'executive' ? '#ea580c' : '#52525b'
+    template.layoutId === 'professional' ? '#2563eb' : 
+    template.layoutId === 'executive' ? '#ea580c' : '#52525b'
   );
   const [profileImageUri, setProfileImageUri] = useState("");
 
@@ -108,7 +111,7 @@ const TemplatePreview = () => {
         sectionSpacing
       }
     };
-    const html = generateATSHTML(customData as any, template.id as any);
+    const html = generateATSHTML(customData as any, template.layoutId as any);
     setHtmlContent(html);
   }, [template, activeData, fontSize, lineHeight, sectionSpacing, accentColor, profileImageUri]);
 

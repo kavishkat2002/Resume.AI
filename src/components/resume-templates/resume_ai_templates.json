@@ -1,0 +1,84 @@
+{
+  "resume_templates": [
+    {
+      "name": "Alex Carter",
+      "title": "DevOps Engineer"
+    },
+    {
+      "name": "Alex Carter",
+      "title": "Pharmacist"
+    },
+    {
+      "name": "Alex Carter",
+      "title": "Project Coordinator"
+    },
+    {
+      "name": "Ava Bennett",
+      "title": "Nurse"
+    },
+    {
+      "name": "Ava Bennett",
+      "title": "Administrative Assistant"
+    },
+    {
+      "name": "Daniel Foster",
+      "title": "Procurement Officer"
+    },
+    {
+      "name": "Daniel Foster",
+      "title": "Bank Officer"
+    },
+    {
+      "name": "Ethan Brooks",
+      "title": "Supply Chain Coordinator"
+    },
+    {
+      "name": "Liam Santos",
+      "title": "Quantity Surveyor"
+    },
+    {
+      "name": "Liam Santos",
+      "title": "React Developer"
+    },
+    {
+      "name": "Liam Santos",
+      "title": "Marketing Executive"
+    },
+    {
+      "name": "Lucas Grant",
+      "title": "Operations Manager"
+    },
+    {
+      "name": "Lucas Grant",
+      "title": "Medical Laboratory Technician"
+    },
+    {
+      "name": "Maya Perera",
+      "title": "Flutter Developer"
+    },
+    {
+      "name": "Maya Perera",
+      "title": "Sales Executive"
+    },
+    {
+      "name": "Maya Perera",
+      "title": "Civil Engineer"
+    },
+    {
+      "name": "Nina Walker",
+      "title": "Logistics Officer"
+    },
+    {
+      "name": "Nina Walker",
+      "title": "Financial Analyst"
+    },
+    {
+      "name": "Noah Mitchell",
+      "title": "Customer Service Representative"
+    },
+    {
+      "name": "Noah Mitchell",
+      "title": "Full-Stack Developer"
+    }
+  ]
+}

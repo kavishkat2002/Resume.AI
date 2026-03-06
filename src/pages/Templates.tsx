@@ -124,7 +124,7 @@ export default function Templates() {
               <Briefcase className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-3xl font-bold">{TEMPLATE_OPTIONS.filter(t => t.category !== "IT" && t.category !== "All").length}</p>
+              <p className="text-3xl font-bold">{TEMPLATE_OPTIONS.filter(t => t.category !== "IT").length}</p>
               <p className="text-sm text-zinc-500">Non-IT Roles</p>
             </div>
           </div>
@@ -241,7 +241,7 @@ export default function Templates() {
                   style={{ transform: "scale(calc(100cqw / 793.7))" }}
                 >
                   <iframe 
-                    srcDoc={generateATSHTML({ ...dummyData, accentColor: template.id === 'modern' ? '#7c3aed' : template.id === 'professional' ? '#2563eb' : template.id === 'executive' ? '#ea580c' : '#52525b' }, template.id as any)}
+                    srcDoc={generateATSHTML({ ...dummyData, fullName: template.personName || dummyData.fullName, jobTitle: template.name, accentColor: template.layoutId === 'professional' ? '#2563eb' : template.layoutId === 'executive' ? '#ea580c' : '#52525b' }, template.layoutId as any)}
                     className="w-[210mm] h-[297mm] border-0 bg-white"
                     scrolling="no"
                     sandbox="allow-same-origin"
