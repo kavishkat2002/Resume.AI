@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -5,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -21,6 +23,7 @@ serve(async (req) => {
     }
 
     const AI_API_KEY = Deno.env.get("AI_API_KEY") || Deno.env.get("LOVABLE_API_KEY") || Deno.env.get("OPENAI_API_KEY");
+
     if (!AI_API_KEY) {
       throw new Error("AI_API_KEY is not configured");
     }
@@ -80,6 +83,7 @@ Analyze the ATS compatibility and provide a detailed score breakdown.`;
           { role: "user", content: userPrompt },
         ],
         temperature: 0.3,
+        max_tokens: 4000,
         response_format: { type: "json_object" }
       }),
     });
@@ -133,6 +137,7 @@ Analyze the ATS compatibility and provide a detailed score breakdown.`;
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (error) {
     console.error("Error calculating ATS score:", error);
     return new Response(
