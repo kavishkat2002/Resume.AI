@@ -48,7 +48,7 @@ const Dashboard = () => {
     let profileComplete = 0;
 
     // 1. Fetch from Local Storage (Fallback/Unauthenticated usage)
-    if (localStorage.getItem('resume_resumeText')) {
+    if (localStorage.getItem('resume_resumeText') || localStorage.getItem('resume_history_current_id')) {
       resumeCount = 1;
     }
     
@@ -57,16 +57,32 @@ const Dashboard = () => {
     }
     
     try {
-      if (localStorage.getItem('ats_score_result')) {
-        const atsResult = JSON.parse(localStorage.getItem('ats_score_result') || '{}');
+      let scores: number[] = [];
+      const atsScoreResult = localStorage.getItem('ats_score_result');
+      if (atsScoreResult) {
+        const atsResult = JSON.parse(atsScoreResult);
         if (atsResult && typeof atsResult.ats_score === 'number') {
-          avgScore = atsResult.ats_score;
+          scores.push(atsResult.ats_score);
         }
       }
-    } catch(e) {}
+      
+      const builderAtsScore = localStorage.getItem('resume_builder_ats_score');
+      if (builderAtsScore) {
+        const atsResult = JSON.parse(builderAtsScore);
+        if (atsResult && typeof atsResult.ats_score === 'number') {
+          scores.push(atsResult.ats_score);
+        }
+      }
+
+      if (scores.length > 0) {
+        avgScore = Math.max(...scores); // Show best recent score locally
+      }
+    } catch(e) {
+      console.warn("Could not parse local ATS scores:", e);
+    }
 
     // Checking if profile is partly filled locally from resume builder
-    const localFields = ['resume_fullName', 'resume_location', 'resume_summary', 'resume_github'];
+    const localFields = ['resume_fullName', 'resume_email', 'resume_phone', 'resume_location', 'resume_summary', 'resume_github', 'resume_linkedin'];
     const filled = localFields.filter(f => !!localStorage.getItem(f)).length;
     profileComplete = Math.round((filled / localFields.length) * 100);
 
@@ -77,8 +93,16 @@ const Dashboard = () => {
           .from("resumes")
           .select("*", { count: "exact", head: true })
           .eq("user_id", user.id);
+          
+        const { count: dbResumeHistoryCount } = await supabase
+          .from("resume_history")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id);
         
-        if (dbResumeCount !== null) resumeCount = Math.max(resumeCount, dbResumeCount);
+        const totalDbResumes = (dbResumeCount || 0) + (dbResumeHistoryCount || 0);
+        if (totalDbResumes > 0) {
+          resumeCount = Math.max(resumeCount, totalDbResumes);
+        }
 
         const { count: dbJobCount } = await supabase
           .from("jobs")
@@ -90,6 +114,7 @@ const Dashboard = () => {
         const { data: resumes } = await supabase
           .from("resumes")
           .select("ats_score")
+          .not("ats_score", "is", null)
           .eq("user_id", user.id);
 
         if (resumes && resumes.length > 0) {
@@ -104,7 +129,7 @@ const Dashboard = () => {
           .single();
 
         if (profile) {
-          const dbFields = ['full_name', 'location', 'professional_summary', 'github_username'];
+          const dbFields = ['full_name', 'email', 'phone', 'location', 'professional_summary', 'github_username', 'linkedin_url'];
           const dbFilled = dbFields.filter(f => profile[f as keyof typeof profile]).length;
           const dbProfileComplete = Math.round((dbFilled / dbFields.length) * 100);
           profileComplete = Math.max(profileComplete, dbProfileComplete);
