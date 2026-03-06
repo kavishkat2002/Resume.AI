@@ -140,19 +140,21 @@ const ResumeBuilder = () => {
   const calculateATS = async (resumeText: string, keywords: string) => {
     if (!resumeText.trim()) return;
     
-    if (!keywords.trim()) {
-      console.log("ATS Scan skipped: No keywords provided.");
+    // Fallback to jobTitle if no keywords are provided to ensure ATS scan still runs on templates
+    const keywordsToUse = keywords.trim() || jobTitle.trim();
+    if (!keywordsToUse) {
+      console.log("ATS Scan skipped: No keywords or job title provided.");
       return;
     }
     
-    console.log("ATS Scan starting for keywords:", keywords.substring(0, 50) + "...");
+    console.log("ATS Scan starting for keywords:", keywordsToUse.substring(0, 50) + "...");
     setIsCalculatingScore(true);
     setAtsScore(null); // Reset previous score while scanning
     
     try {
       const { data, error } = await supabase.functions.invoke("calculate-ats-score", {
         body: {
-          jobKeywords: parseCommaSeparated(keywords),
+          jobKeywords: parseCommaSeparated(keywordsToUse),
           resumeContent: resumeText,
         },
       });
@@ -252,9 +254,18 @@ const ResumeBuilder = () => {
         setJobDescription(locationState.responsibilities);
       }
     }
+    
+    // Auto-populate jobTitle from the selected template if arriving via template select
+    if (templateFromUrl) {
+      const targetTemplate = TEMPLATE_OPTIONS.find(t => t.id === templateFromUrl);
+      if (targetTemplate && !jobTitle) {
+        setJobTitle(targetTemplate.name);
+      }
+    }
+    
     fetchUserData();
     fetchResumeHistory();
-  }, [locationState]);
+  }, [locationState, templateFromUrl]);
 
 
 
@@ -827,9 +838,10 @@ const ResumeBuilder = () => {
         // Save to history
         await saveResumeToHistory(generatedContent);
         
-        // Auto-calculate ATS Score if keywords exist
-        if (jobKeywords.trim()) {
-          calculateATS(generatedContent, jobKeywords);
+        // Auto-calculate ATS Score if keywords or jobTitle exists
+        const keywordsToScan = jobKeywords.trim() || jobTitle.trim();
+        if (keywordsToScan) {
+          calculateATS(generatedContent, keywordsToScan);
         }
         
         toast.success("Resume generated successfully!");
