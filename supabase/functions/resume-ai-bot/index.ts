@@ -52,7 +52,7 @@ Keep your tone professional, supportive, and direct. Use markdown for readabilit
     } else if (AI_API_KEY.startsWith("sk-or-")) {
       // OpenRouter Key - Changed to fully FREE fallback router to prevent payment errors
       endpoint = "https://openrouter.ai/api/v1/chat/completions";
-      model = "openrouter/free";
+      model = "openai/gpt-4o-mini";
     } else if (!AI_API_KEY.startsWith("sk-")) {
       // Fallback to Lovable Gateway
       endpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
