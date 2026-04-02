@@ -111,24 +111,26 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
 
             {/* Technical Skills */}
             {data.skills && data.skills.length > 0 && (
-                <section style={{ marginBottom: '18px' }}>
-                    <h2 style={{
-                        fontSize: '12pt',
-                        fontWeight: 'bold',
-                        color: '#000',
-                        marginBottom: '8px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
-                    }}>
-                        Technical Skills
-                    </h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        {/* We group by category if possible, but for a simple list: */}
-                        <p style={{ margin: 0 }}>
-                            {data.skills.join(', ')}
-                        </p>
-                    </div>
-                </section>
+                <>
+                    {data.skills.map((skill, idx) => {
+                        const [category, list] = skill.includes(':') ? skill.split(/:(.*)/s) : [null, skill];
+                        return (
+                            <section key={idx} style={{ marginBottom: '16px' }}>
+                                <h2 style={{
+                                    fontSize: '12pt',
+                                    fontWeight: 'bold',
+                                    color: '#000',
+                                    marginBottom: '6px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    {category || 'Competencies'}
+                                </h2>
+                                <div style={{ fontSize: '10.5pt', color: '#333' }}>{list}</div>
+                            </section>
+                        );
+                    })}
+                </>
             )}
 
             {/* Experience */}
@@ -211,7 +213,13 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
                             <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
                                 {project.name} {project.tech && <span style={{ fontWeight: 'normal', fontStyle: 'italic', fontSize: '9.5pt', color: '#666' }}>({project.tech})</span>}
                             </div>
-                            <p style={{ margin: 0 }}>{project.description}</p>
+                            <ul style={{ margin: 0, paddingLeft: '18px' }}>
+                                {project.description.split('\n').filter((d: string) => d.trim()).map((desc: string, didx: number) => (
+                                    <li key={didx} style={{ marginBottom: '2px' }}>
+                                        {desc.replace(/^[•\-\*]\s*/, '')}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     ))}
                 </section>
@@ -231,8 +239,13 @@ export const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data }) => {
                         Education
                     </h2>
                     {data.education.map((edu, idx) => (
-                        <div key={idx} style={{ marginBottom: '4px', fontWeight: 'bold' }}>
-                            {edu.degree} | {edu.institution} | {edu.year}
+                        <div key={idx} style={{ marginBottom: '6px' }}>
+                            <div style={{ fontWeight: 'bold' }}>
+                                {edu.degree}{edu.details ? ` ${edu.details}` : ''} | {edu.year}
+                            </div>
+                            <div style={{ fontSize: '10.5pt', color: '#555', marginTop: '1px' }}>
+                                {edu.institution}
+                            </div>
                         </div>
                     ))}
                 </section>

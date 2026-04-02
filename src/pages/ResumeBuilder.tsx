@@ -441,8 +441,24 @@ const ResumeBuilder = () => {
         job_keywords: parseCommaSeparated(jobKeywords),
         skills: parseCommaSeparated(skills),
         projects: projectList as any,
-        experience: parseExperience(experience),
-        education: parseEducation(education),
+        experience: workExperience.length > 0
+          ? workExperience.map((w: any) => ({
+              title: w.title,
+              company: w.company,
+              duration: w.dates,
+              bullets: typeof w.bullets === 'string'
+                ? w.bullets.split('\n').filter((b: string) => b.trim())
+                : (w.bullets || [])
+            }))
+          : parseExperience(experience),
+        education: eduList.length > 0
+          ? eduList.map((edu: any) => ({
+              degree: edu.degree,
+              institution: edu.school,
+              year: edu.dates,
+              details: edu.details || ''
+            }))
+          : parseEducation(education),
         resume_text: resumeText,
         template_id: selectedTemplate,
       };
@@ -764,8 +780,24 @@ const ResumeBuilder = () => {
           additionalSkills: parseCommaSeparated(additionalSkills),
           jobDescription: jobDescription,
           projects: projectList as any,
-          experience: parseExperience(experience),
-          education: parseEducation(education),
+          experience: workExperience.length > 0
+            ? workExperience.map((w: any) => ({
+                title: w.title,
+                company: w.company,
+                duration: w.dates,
+                bullets: typeof w.bullets === 'string'
+                  ? w.bullets.split('\n').filter((b: string) => b.trim())
+                  : (w.bullets || [])
+              }))
+            : parseExperience(experience),
+          education: eduList.length > 0
+            ? eduList.map((edu: any) => ({
+                degree: edu.degree,
+                institution: edu.school,
+                year: edu.dates,
+                details: edu.details || ''
+              }))
+            : parseEducation(education),
         },
       });
 
@@ -778,61 +810,18 @@ const ResumeBuilder = () => {
       if (generatedContent) {
         setResume(generatedContent);
         
-        // Extract summary from the newly generated content and update the summary field
+        // Sync newly categorized skills and summary back to the form state
+        // This ensures the categorization is visible in both the form and the preview
         const summarySection = extractSection(generatedContent, 'PROFESSIONAL SUMMARY|SUMMARY');
         const cleanSummary = cleanText(summarySection);
         if (cleanSummary) {
           setSummary(cleanSummary);
         }
 
-        // Extract skills and update skills field with categories
-        const extractedSkills = parseResumeSkills(generatedContent);
-        if (extractedSkills && extractedSkills.length > 0) {
-          const groups = extractedSkills.map(s => {
-            if (s.includes(':')) {
-              const [name, items] = s.split(':').map(part => part.trim());
-              return { id: crypto.randomUUID(), name, items };
-            }
-            return { id: crypto.randomUUID(), name: "General", items: s };
-          });
-          setSkillGroups(groups);
-          setSkills(extractedSkills.join("\n"));
-        }
-        
-        // Extract experience and populate structured field
-        const extractedExp = parseResumeExperience(generatedContent);
-        if (extractedExp && extractedExp.length > 0) {
-          setWorkExperience(extractedExp.map(exp => ({
-            id: crypto.randomUUID(),
-            title: exp.title,
-            company: exp.company,
-            location: "",
-            dates: exp.duration,
-            bullets: exp.bullets.join("\n")
-          })));
-        }
-        
-        // Extract education and populate structured field
-        const extractedEdu = parseResumeEducation(generatedContent);
-        if (extractedEdu && extractedEdu.length > 0 && Array.isArray(extractedEdu)) {
-          setEduList(extractedEdu.map(edu => ({
-            id: crypto.randomUUID(),
-            degree: edu.degree,
-            school: edu.institution,
-            dates: edu.year,
-            details: ""
-          })));
-        }
-
-        // Extract certifications and populate structured field
-        const extractedCert = parseResumeCertifications(generatedContent);
-        if (extractedCert && extractedCert.length > 0) {
-          setCertList(extractedCert.map(cert => ({
-            id: crypto.randomUUID(),
-            name: cert.name,
-            issuer: cert.issuer,
-            date: cert.date
-          })));
+        const categorizedSkills = parseResumeSkills(generatedContent);
+        if (categorizedSkills.length > 0) {
+          // Join with newlines to ensure prepareResumeData processes them as separate bullets/categories
+          setSkills(categorizedSkills.join('\n'));
         }
 
         // Save to history
@@ -1203,7 +1192,8 @@ const ResumeBuilder = () => {
         ? eduList.map(edu => ({
             degree: edu.degree,
             institution: edu.school,
-            year: edu.dates
+            year: edu.dates,
+            details: edu.details || ''
           }))
         : parseResumeEducation(resume),
       certifications: certList.length > 0

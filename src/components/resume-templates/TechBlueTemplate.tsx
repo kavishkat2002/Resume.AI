@@ -226,27 +226,19 @@ export const TechBlueTemplate: React.FC<TechBlueTemplateProps> = ({ data, jobTit
             )}
 
             {data.skills && data.skills.length > 0 && (
-                <section style={{ marginBottom: '18px' }}>
-                    <h2 style={{ fontSize: '12pt', fontWeight: 'bold', borderBottom: '1px solid #D1D5DB', paddingBottom: '4px', marginBottom: '8px', color: '#111827' }}>
-                        Core Skills
-                    </h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                        {data.skills.map((skill, idx) => {
-                            if (skill.includes(':')) {
-                                const [category, items] = skill.split(':').map(s => s.trim());
-                                return (
-                                    <div key={idx} style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span style={{ fontWeight: 'bold', color: '#111827', fontSize: '10pt', marginBottom: '3px' }}>{category}</span>
-                                        <span style={{ color: '#4B5563', fontSize: '10pt' }}>{items}</span>
-                                    </div>
-                                );
-                            }
-                            return (
-                                <span key={idx} style={{ color: '#4B5563', fontSize: '10pt' }}>{skill}</span>
-                            );
-                        })}
-                    </div>
-                </section>
+                <>
+                    {data.skills.map((skill, idx) => {
+                        const [category, items] = skill.includes(':') ? skill.split(/:(.*)/s).map(s => s.trim()) : [null, skill];
+                        return (
+                            <section key={idx} style={{ marginBottom: '18px' }}>
+                                <h2 style={{ fontSize: '12pt', fontWeight: 'bold', borderBottom: '1px solid #D1D5DB', paddingBottom: '4px', marginBottom: '8px', color: '#111827', textTransform: 'uppercase' }}>
+                                    {category || 'Key Expertise'}
+                                </h2>
+                                <div style={{ color: '#4B5563', fontSize: '10.5pt', lineHeight: '1.5' }}>{items}</div>
+                            </section>
+                        );
+                    })}
+                </>
             )}
 
             {data.education && data.education.length > 0 && (
@@ -258,7 +250,7 @@ export const TechBlueTemplate: React.FC<TechBlueTemplateProps> = ({ data, jobTit
                         <div key={idx} style={{ marginBottom: '10px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                 <h3 style={{ fontSize: '11pt', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-                                    {edu.degree}
+                                    {edu.degree}{edu.details ? ` ${edu.details}` : ''}
                                 </h3>
                                 <span style={{ fontSize: '9.5pt', color: '#4B5563' }}>
                                     {edu.year}

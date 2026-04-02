@@ -176,50 +176,33 @@ export const generateATSHTML = (data: ResumeData, template: 'classic' | 'executi
     ` : ''}
 
     ${data.skills && data.skills.length > 0 ? `
-    <!-- Technical Skills -->
-    <section class="section">
-      <h2 class="section-title">CORE SKILLS</h2>
-      <div class="section-content">
-        <div class="skills-grid">
-          ${data.skills.map(skill => {
-      if (skill.includes(':')) {
-        const [category, items] = skill.split(':').map(s => s.trim());
-        return `
-            <div class="skill-box">
-              <span class="skill-category">${category}</span>
-              <p class="skill-values">${items}</p>
-            </div>`;
-      }
-      return `<p class="skill-row">${skill}</p>`;
-    }).join('')}
+    <!-- Categorised Skills -->
+    ${data.skills.map(skill => {
+      const [category, items] = skill.includes(':') ? skill.split(/:(.*)/s).map(s => s.trim()) : [null, skill];
+      return `
+      <section class="section" style="break-inside: avoid; page-break-inside: avoid;">
+        <h2 class="section-title">${(category || 'Technical Expertise').toUpperCase()}</h2>
+        <div class="section-content">
+          <p class="skill-row">${items}</p>
         </div>
-      </div>
-    </section>
+      </section>
+      `;
+    }).join('')}
     ` : ''}
 
     ${data.additionalSkills && data.additionalSkills.length > 0 ? `
     <!-- Additional Skills -->
-    <section class="section">
-      <h2 class="section-title">ADDITIONAL SKILLS</h2>
-      <div class="section-content">
-        <div class="skills-grid">
-          ${data.additionalSkills.map(skill => {
-      if (skill.includes(':')) {
-        const [category, items] = skill.split(':').map(s => s.trim());
-        return `
-            <div class="skill-box">
-              <span class="skill-category">${category}</span>
-              <p class="skill-values">${items}</p>
-            </div>`;
-      }
+    ${data.additionalSkills.map(skill => {
+      const [category, items] = skill.includes(':') ? skill.split(/:(.*)/s).map(s => s.trim()) : [null, skill];
       return `
-            <div class="skill-box">
-              <p class="skill-values">${skill}</p>
-            </div>`;
-    }).join('')}
+      <section class="section" style="break-inside: avoid; page-break-inside: avoid;">
+        <h2 class="section-title">${(category || 'Additional Skills').toUpperCase()}</h2>
+        <div class="section-content">
+          <p class="skill-row">${items}</p>
         </div>
-      </div>
-    </section>
+      </section>
+      `;
+    }).join('')}
     ` : ''}
 
     ${data.experience && data.experience.length > 0 ? `
@@ -258,7 +241,9 @@ export const generateATSHTML = (data: ResumeData, template: 'classic' | 'executi
               ${project.dates ? `<span class="exp-duration">${project.dates}</span>` : ''}
             </div>
             ${project.tech ? `<p class="tech-stack" style="margin-top: -2px; margin-bottom: 4px;"><strong>Technologies:</strong> ${project.tech}</p>` : ''}
-            <p class="project-description">${project.description}</p>
+            <ul class="exp-bullets">
+              ${project.description.split('\n').filter((d: string) => d.trim()).map((desc: string) => `<li>${desc.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+            </ul>
           </div>
         `).join('')}
       </div>
@@ -273,7 +258,7 @@ export const generateATSHTML = (data: ResumeData, template: 'classic' | 'executi
         ${data.education.map(edu => `
           <div class="education-item">
             <div class="edu-row">
-              <span class="edu-degree">${edu.degree}</span>
+              <span class="edu-degree">${edu.degree}${edu.details ? ` ${edu.details}` : ''}</span>
               <span class="edu-year">${edu.year}</span>
             </div>
             <p class="edu-institution">${edu.institution}</p>
@@ -553,6 +538,13 @@ const getTemplateStyles = (template: 'classic' | 'executive' | 'professional' | 
       color: #4a5568;
       margin: 0 0 12px 0;
       font-style: italic;
+    }
+
+    .edu-details {
+      font-size: 10pt;
+      color: #6b7280;
+      font-style: italic;
+      margin: 2px 0 12px 0;
     }
     
     .exp-duration {

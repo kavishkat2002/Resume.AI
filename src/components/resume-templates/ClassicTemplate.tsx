@@ -108,23 +108,28 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ data }) => {
 
             {/* Technical Skills */}
             {data.skills && data.skills.length > 0 && (
-                <section style={{ marginBottom: '18px' }}>
-                    <h2 style={{
-                        fontSize: '13pt',
-                        fontWeight: 'bold',
-                        color: '#000',
-                        borderBottom: '1px solid #000',
-                        paddingBottom: '3px',
-                        marginBottom: '8px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                    }}>
-                        Technical Skills
-                    </h2>
-                    <p style={{ margin: 0 }}>
-                        {data.skills.join(' • ')}
-                    </p>
-                </section>
+                <>
+                    {data.skills.map((skill, idx) => {
+                        const [category, list] = skill.includes(':') ? skill.split(/:(.*)/s) : [null, skill];
+                        return (
+                            <section key={idx} style={{ marginBottom: '16px' }}>
+                                <h2 style={{
+                                    fontSize: '13pt',
+                                    fontWeight: 'bold',
+                                    color: '#000',
+                                    borderBottom: '1px solid #000',
+                                    paddingBottom: '3px',
+                                    marginBottom: '6px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px'
+                                }}>
+                                    {category || 'Technical Expertise'}
+                                </h2>
+                                <div style={{ fontSize: '11pt' }}>{list}</div>
+                            </section>
+                        );
+                    })}
+                </>
             )}
 
             {/* Projects */}
@@ -162,7 +167,13 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ data }) => {
                                     Tech Stack: {project.tech}
                                 </p>
                             )}
-                            <p style={{ margin: 0 }}>{project.description}</p>
+                            <ul style={{ margin: 0, paddingLeft: '18px' }}>
+                                {project.description.split('\n').filter((d: string) => d.trim()).map((desc: string, didx: number) => (
+                                    <li key={didx} style={{ marginBottom: '3px' }}>
+                                        {desc.replace(/^[•\-\*]\s*/, '')}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     ))}
                 </section>
@@ -265,7 +276,7 @@ export const ClassicTemplate: React.FC<ClassicTemplateProps> = ({ data }) => {
                                     color: '#000',
                                     margin: 0
                                 }}>
-                                    {edu.degree}
+                                    {edu.degree}{edu.details ? ` ${edu.details}` : ''}
                                 </h3>
                                 <span style={{
                                     fontSize: '10pt',

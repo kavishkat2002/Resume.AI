@@ -1,11 +1,10 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
+// @ts-nocheck
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
     // Handle CORS preflight requests
     if (req.method === "OPTIONS") {
         return new Response("ok", { headers: corsHeaders });
@@ -26,22 +25,31 @@ serve(async (req) => {
             throw new Error("AI_API_KEY is not configured");
         }
 
-        const systemPrompt = `You are an expert ATS (Applicant Tracking System) optimizer. 
-    Analyze the provided Job Description, optional initial keywords, and the candidate's existing skills/projects.
+        const systemPrompt = `You are an expert ATS (Applicant Tracking System) optimizer and IT Career Coach. 
+    Analyze the provided Job Description, keywords, and candidate background.
     
     Tasks:
     1. Extract critical "hard skills" and "tech stack" from the Job Description.
-    2. Compare these with the candidate's background (User Skills, User Projects).
-    3. Generate a list of "Your Technical Skills" for the resume.
-       - PRIORITIZE: Skills the user HAS that are ALSO in the Job Description.
-       - SECONDARY: Skills in the Job Description that are highly likely implied by the user's background (e.g., if user knows React, they likely know JS/HTML/CSS).
-       - SUGGESTIONS: High-impact keywords from the JD that the user *should* consider adding if they have any familiarity.
+    2. Compare these with the candidate's background.
+    3. Generate a highly structured list of "Your Technical Skills" for the resume.
+    
+    IMPORTANT CATEGORIZATION RULES:
+    Categorize skills into professional IT Sectors such as:
+    - "Software Engineering"
+    - "Cloud & Infrastructure"
+    - "DevOps & SRE"
+    - "Machine Learning & AI"
+    - "Data Engineering"
+    - "Cybersecurity"
+    - "Professional Competencies" (for soft skills)
+    
+    FORMAT for suggested_user_skills: Each item in the array must be "Sector Name: Skill 1, Skill 2, ..."
     
     Return output strictly in JSON format with:
-    - top_keywords: Array of strings (The 15-20 most important keywords mixed tech/soft for the JOB)
-    - tech_stack: Array of strings (Specific languages, tools, frameworks for the JOB)
-    - suggested_user_skills: Array of strings (The ideal comma-separated skills list for the USER'S resume, tailored to this job)
-    - job_title_inferred: String (Best guess at the standardized job title)
+    - top_keywords: Array of strings (15-20 keywords)
+    - tech_stack: Array of strings (Specific tools/languages)
+    - suggested_user_skills: Array of strings (E.g. ["Software Engineering: React, Node.js", "Cloud: AWS, Azure"])
+    - job_title_inferred: String (Best guess task title)
     
     Return ONLY valid JSON.`;
 

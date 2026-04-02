@@ -102,21 +102,26 @@ export const SimpleTemplate: React.FC<SimpleTemplateProps> = ({ data }) => {
 
             {/* Technical Skills */}
             {data.skills && data.skills.length > 0 && (
-                <section style={{ marginBottom: '18px' }}>
-                    <h2 style={{
-                        fontSize: '13pt',
-                        fontWeight: 'bold',
-                        color: '#2c3e50',
-                        marginBottom: '8px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
-                    }}>
-                        Skills
-                    </h2>
-                    <p style={{ margin: 0, color: '#34495e' }}>
-                        {data.skills.join(', ')}
-                    </p>
-                </section>
+                <>
+                    {data.skills.map((skill, idx) => {
+                        const [category, list] = skill.includes(':') ? skill.split(/:(.*)/s) : [null, skill];
+                        return (
+                            <section key={idx} style={{ marginBottom: '16px' }}>
+                                <h2 style={{
+                                    fontSize: '13pt',
+                                    fontWeight: 'bold',
+                                    color: '#2c3e50',
+                                    marginBottom: '6px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px'
+                                }}>
+                                    {category || 'Key Skills'}
+                                </h2>
+                                <div style={{ fontSize: '10.5pt', color: '#34495e' }}>{list}</div>
+                            </section>
+                        );
+                    })}
+                </>
             )}
 
             {/* Projects */}
@@ -151,7 +156,13 @@ export const SimpleTemplate: React.FC<SimpleTemplateProps> = ({ data }) => {
                                     <strong>Technologies:</strong> {project.tech}
                                 </p>
                             )}
-                            <p style={{ margin: 0, color: '#34495e' }}>{project.description}</p>
+                            <ul style={{ margin: 0, paddingLeft: '18px', color: '#34495e' }}>
+                                {project.description.split('\n').filter((d: string) => d.trim()).map((desc: string, didx: number) => (
+                                    <li key={didx} style={{ marginBottom: '3px' }}>
+                                        {desc.replace(/^[•\-\*]\s*/, '')}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     ))}
                 </section>
@@ -251,7 +262,7 @@ export const SimpleTemplate: React.FC<SimpleTemplateProps> = ({ data }) => {
                                     color: '#2c3e50',
                                     margin: 0
                                 }}>
-                                    {edu.degree}
+                                    {edu.degree}{edu.details ? ` ${edu.details}` : ''}
                                 </h3>
                                 <span style={{
                                     fontSize: '10pt',

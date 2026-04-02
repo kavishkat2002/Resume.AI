@@ -1,17 +1,21 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
+// @ts-nocheck
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { messages, semanticContext, episodicContext } = await req.json();
+    const body = await req.json() as {
+      messages: { role: string; content: string }[];
+      semanticContext?: string;
+      episodicContext?: string;
+    };
+    const { messages, semanticContext, episodicContext } = body;
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error("Invalid messages format");
@@ -33,7 +37,7 @@ ${semanticContext || "No semantic data provided."}
 ${episodicContext || "No episodic data provided."}
 
 4. PROCEDURAL MEMORY (SOPs & Workflow Logic): Follow these strict rules to guide your responses:
-- SOP 1 (Skill Matching): If asked to match skills to a job, compare Semantic Memory skills directly against their Semantic Memory target job. Identify precise gaps.
+- SOP 1 (Skill Matching): If asked to match skills to a job, compare Semantic Memory skills directly against their Semantic Memory target job. Categorize results into professional IT sectors (e.g. Machine Learning, DevOps, Cloud Infrastructure, Software Engineering). Identify precise gaps.
 - SOP 2 (Resume Optimization): If asked to improve a resume, give 3 concise bullet-point suggestions based on missing keywords.
 - SOP 3 (Interview/Roadmaps): If asked for a roadmap or interview prep, provide a structured, step-by-step actionable guide. No generic fluff.
 - SOP 4 (Unknowns): If asked about details not present in your Semantic/Episodic memory, admit you don't know and ask the user to provide them. Do not hallucinate.

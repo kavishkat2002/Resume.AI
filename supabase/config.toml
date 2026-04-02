@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.suggest-learning]
 verify_jwt = false
+
+[functions.resume-ai-bot]
+verify_jwt = false

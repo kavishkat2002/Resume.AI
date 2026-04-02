@@ -36,6 +36,7 @@ export interface ResumeData {
         degree: string;
         institution: string;
         year: string;
+        details?: string;
     }>;
     certifications?: Array<{
         name: string;

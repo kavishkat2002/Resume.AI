@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -104,32 +105,133 @@ serve(async (req) => {
 
       case 'resume':
         console.log("LOGIC_FLOW: RESUME_PATH_ACTIVATED");
-        systemPrompt = `Generate a high-quality, ATS-optimized resume.
-        
-        CRITICAL RULES:
-        - If 'jobDescription' is provided, TAILOR the professional summary and experience bullets to match the requirements and responsibilities.
-        - DYNAMIC SKILL CATEGORIZATION: Group skills into specifically relevant categories based on the job description's focus (e.g., instead of generic "Soft Skills," use "Communication" or "Delivery" if that's the job's focus).
-        - Aim for 4-6 balanced categories like "Core Tools", "Development & Platform", "Delivery & Process", "Strategy & Soft Skills".
-        - Each category MUST be in "Category Name: Skill 1, Skill 2, ..." format.
-        - Merge 'skills' and 'additionalSkills' into these categories.
-        - Use PROVIDED projects. If empty, suggest 3 high-impact tech projects.
-        
-        LAYOUT:
-        - Professional Summary, CORE SKILLS (List with Categories), Projects, Experience, Education.
-        - CAPS HEADERS for sections.
-        - Bullet points for descriptions.`;
+        systemPrompt = `You are an elite ATS resume engineer. Your job is to generate a targeted, ATS-optimized resume for a SPECIFIC job role.
 
-        userPrompt = `Generate an ATS-optimized resume for:
-        FullName: ${fullName || "Your Name"}
-        Target Job: ${jobTitle}
-        ${jobDescription ? `Context Job Description: ${jobDescription}\n` : ""}
-        Search Keywords: ${JSON.stringify(jobKeywords || [])}
-        Skills: ${JSON.stringify(skills || [])}
-        Additional Skills (Soft/Tools/Preferred): ${JSON.stringify(additionalSkills || [])}
-        Projects: ${projects && projects.length > 0 ? JSON.stringify(projects) : "PROJECTS EMPTY - SUGGEST 3."}
-        Experience: ${JSON.stringify(experience || [])}
-        Education: ${JSON.stringify(education || [])}`;
+        ====================================================
+        ⚠️ ACCURACY RULES — READ FIRST, THESE ARE ABSOLUTE
+        ====================================================
+
+        The candidate's data is FACTUAL. You are an optimizer, not an inventor.
+        
+        WHAT YOU MUST NEVER DO:
+        ✗ Do NOT invent companies, job titles, or dates that aren't in the candidate's experience
+        ✗ Do NOT fabricate metrics (e.g. "improved performance by 60%") unless the user provided them
+        ✗ Do NOT add certifications, degrees, or educational institutions not provided
+        ✗ Do NOT change the candidate's actual job titles or company names
+        ✗ Do NOT invent achievements or responsibilities the user did not mention
+        ✗ Do NOT assume years of experience — only state what's derivable from the provided data
+
+        WHAT YOU ARE ALLOWED TO DO:
+        ✓ REPHRASE experience bullets using stronger ATS action verbs (e.g. "Helped fix bugs" → "Resolved software defects to improve system stability")
+        ✓ REORDER information to highlight relevance to the target role
+        ✓ ADD role-standard skills in the Core Skills section (from your knowledge of the domain)
+        ✓ WRITE a professional summary based ONLY on the provided experience, education, and skills
+        ✓ GENERATE projects (when none are provided) since these are clearly AI-suggested examples
+
+        ====================================================
+        CORE SKILLS — COMPUTER SCIENCE SECTOR METHOD
+        ====================================================
+
+        Organise skills into professional INDUSTRY SECTORS (Computer Science domains).
+        DO NOT use generic categories like "Technical Skills" or "Additional Skills".
+
+        STEP A — DEFINE THE ROLE DOMAIN from the Target Job Title.
+
+        STEP B — BUILD SECTOR CATEGORIES (Professional IT Domains):
+        Use high-end, industry-standard labels. Examples:
+        → "Machine Learning & AI": (Python, PyTorch, TensorFlow, LLMs)
+        → "Cloud & Multi-Cloud Infrastructure": (AWS, Azure, GCP, Terraform)
+        → "DevOps & SRE": (Jenkins, Kubernetes, Ansible, Docker, CI/CD)
+        → "Software Engineering": (Java, Clean Code, Microservices, Spring Boot)
+        → "Cybersecurity & GRC": (Penetration Testing, IAM, ISO27001, SIEM)
+        → "Data Engineering & Analytics": (SQL, ETL Pipelines, Spark, BigQuery)
+        → "Systems Administration & IT Support": (Windows Server, Linux, Troubleshooting, Active Directory)
+
+        STEP C — POPULATE with candidate's actual skills + role-standard skills.
+
+        STEP D — CROSS-REFERENCE: Prioritise candidate's skills that match these sectors.
+        Ensure "Soft Skills" (Teamwork, Communication) are grouped under "Professional Competencies" or similar professional header.
+
+        FORMAT: "Sector Name: Skill 1, Skill 2, Skill 3, ..."
+
+        ====================================================
+        PROFESSIONAL SUMMARY
+        ====================================================
+        - Write 3-4 sentences based STRICTLY on the candidate's actual experience and education provided.
+        - Use the exact job title in the first sentence.
+        - Inject 2-3 ATS keywords from the job description.
+        - Only mention years of experience if derivable from the provided experience data.
+        - Do NOT claim certifications, achievements, or expertise not evidenced in the candidate's data.
+
+        ====================================================
+        EXPERIENCE SECTION
+        ====================================================
+        - Use ONLY the job titles, companies, and durations from the candidate's provided experience.
+        - KEEP all facts intact. ONLY improve the phrasing of bullet points to use stronger action verbs.
+        - Reorder bullets to front-load the most relevant responsibilities for the target role.
+        - Do NOT add responsibilities that aren't in the original data.
+
+        ====================================================
+        EDUCATION SECTION
+        ====================================================
+        - Use EXACTLY what was provided. Do not alter degrees, institutions, or years.
+
+        ====================================================
+        PROJECT GENERATION (only when no projects are provided by the candidate)
+        ====================================================
+
+        Generate exactly 3 INDUSTRY-LEVEL projects that a strong candidate for "${jobTitle}" would have built.
+        These must be REAL-WORLD, IMPACTFUL projects — not toy examples. Think portfolio-worthy GitHub projects or production systems.
+
+        For each project, follow this EXACT FORMAT (no deviation):
+
+        [Project Name]
+        Tech Stack: [comma-separated technologies standard for this role]
+        • [Bullet 1: what was built/achieved — include a quantifiable metric e.g. "reduced", "increased", "automated", "%", "ms"]
+        • [Bullet 2: technical challenge solved or methodology used]
+        • [Bullet 3: outcome, scale, or user impact]
+
+        Rules for project generation:
+        - Project names must be descriptive and professional (e.g. "Enterprise Helpdesk Portal", "AI-Powered Resume Screener", NOT "Project A" or "My App")
+        - Technologies must be the gold-standard stack for the specific job role
+        - Each bullet point must START with a strong action verb (Engineered, Designed, Automated, Deployed, Reduced, Implemented, Integrated...)
+        - Bullet 1 MUST contain at least one metric (%, ms, users, tickets, hours, etc.)
+        - All 3 projects must serve different purposes (e.g. web app + automation tool + infrastructure/data project)
+        - Bullets must use ONLY the '• ' prefix character — no dashes, asterisks, or numbers
+
+        LAYOUT: Professional Summary → CORE SKILLS → PROJECTS → EXPERIENCE → EDUCATION
+        All section headers in ALL CAPS. Bullet points for all descriptions.`;
+
+        userPrompt = `Target Job: "${jobTitle}"
+${jobDescription ? `\nJob Description:\n${jobDescription}\n` : ""}
+ATS Keywords: ${JSON.stringify(jobKeywords || [])}
+
+Candidate Name: ${fullName || "Your Name"}
+
+=== FACTUAL DATA — USE EXACTLY AS PROVIDED ===
+Experience (DO NOT change company names, job titles, or dates — only improve bullet phrasing):
+${JSON.stringify(experience || [])}
+
+Education (USE EXACTLY — do not alter):
+${JSON.stringify(education || [])}
+
+Projects (use exactly if provided):
+${projects && projects.length > 0 ? JSON.stringify(projects) : `NONE PROVIDED — generate 3 role-appropriate sample projects for a "${jobTitle}" using standard tools for that domain. Each needs a project name, "Tech Stack: ..." line, and 2-3 impact-driven bullet points.`}
+
+=== PROFILE DATA — FILTER FOR ROLE RELEVANCE ===
+Background Skills (filter: only use skills relevant to "${jobTitle}"):
+${JSON.stringify([...(skills || []), ...(additionalSkills || [])])}
+
+=== YOUR TASK ===
+1. Write CORE SKILLS using the Role-First method for "${jobTitle}" — built from domain knowledge, cross-referenced with candidate skills above.
+2. Write PROFESSIONAL SUMMARY using only facts evidenced in the candidate's experience and education above.
+3. Write EXPERIENCE section preserving all real details, only improving ATS language of bullet points.
+4. Write EDUCATION section exactly as provided.
+5. Generate or include PROJECTS section.`;
         break;
+
+
+
 
       default:
         console.error(`Invalid mode attempted: ${mode}`);
